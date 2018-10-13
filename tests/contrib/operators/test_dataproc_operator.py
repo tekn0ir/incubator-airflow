@@ -59,6 +59,7 @@ INTERNAL_IP_ONLY = True
 TAGS = ['tag1', 'tag2']
 STORAGE_BUCKET = 'gs://airflow-test-bucket/'
 IMAGE_VERSION = '1.1'
+CUSTOM_IMAGE = 'test-custom-image'
 MASTER_MACHINE_TYPE = 'n1-standard-2'
 MASTER_DISK_SIZE = 100
 MASTER_DISK_TYPE = 'pd-standard'

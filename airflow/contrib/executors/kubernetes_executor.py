@@ -336,6 +336,7 @@ class AirflowKubernetesScheduler(LoggingMixin):
         self.log.debug("Kubernetes running for command %s", command)
         self.log.debug("Kubernetes launching image %s", self.kube_config.kube_image)
 
+        self.log.debug("Anders was here!!")
         try:
             pod = self.worker_configuration.make_pod(
                 namespace=self.namespace, worker_uuid=self.worker_uuid,

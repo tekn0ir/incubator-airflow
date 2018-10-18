@@ -335,15 +335,21 @@ class AirflowKubernetesScheduler(LoggingMixin):
         dag_id, task_id, execution_date = key
         self.log.debug("Kubernetes running for command %s", command)
         self.log.debug("Kubernetes launching image %s", self.kube_config.kube_image)
-        pod = self.worker_configuration.make_pod(
-            namespace=self.namespace, worker_uuid=self.worker_uuid,
-            pod_id=self._create_pod_id(dag_id, task_id),
-            dag_id=dag_id, task_id=task_id,
-            execution_date=self._datetime_to_label_safe_datestring(execution_date),
-            airflow_command=command, kube_executor_config=kube_executor_config
-        )
-        # the watcher will monitor pods, so we do not block.
-        self.launcher.run_pod_async(pod)
+
+        try:
+            pod = self.worker_configuration.make_pod(
+                namespace=self.namespace, worker_uuid=self.worker_uuid,
+                pod_id=self._create_pod_id(dag_id, task_id),
+                dag_id=dag_id, task_id=task_id,
+                execution_date=self._datetime_to_label_safe_datestring(execution_date),
+                airflow_command=command, kube_executor_config=kube_executor_config
+            )
+            # the watcher will monitor pods, so we do not block.
+            self.launcher.run_pod_async(pod)
+        except Exception as e:
+            log.exception(e)
+            log.error('Failed to launching worker pod with command %s', command)
+
         self.log.debug("Kubernetes Job created!")
 
     def delete_pod(self, pod_id):

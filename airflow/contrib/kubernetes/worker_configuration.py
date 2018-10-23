@@ -147,7 +147,7 @@ class WorkerConfiguration(LoggingMixin):
         dags_volume_mount = {
             'name': dags_volume_name,
             'mountPath': dag_volume_mount_path,
-            'readOnly': True,
+            'readOnly': False,
         }
         if self.kube_config.dags_volume_subpath:
             dags_volume_mount['subPath'] = self.kube_config.dags_volume_subpath

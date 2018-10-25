@@ -49,15 +49,20 @@ class PodLauncher(LoggingMixin):
         ) if extract_xcom else pod_factory.SimplePodRequestFactory()
 
     def run_pod_async(self, pod):
-        req = self.kube_req_factory.create(pod)
-        self.log.debug('Pod Creation Request: \n%s', json.dumps(req, indent=2))
         try:
-            resp = self._client.create_namespaced_pod(body=req, namespace=pod.namespace)
-            self.log.debug('Pod Creation Response: %s', resp)
-        except ApiException:
-            self.log.exception('Exception when attempting to create Namespaced Pod.')
+            req = self.kube_req_factory.create(pod)
+            self.log.debug('Pod Creation Request: \n%s', json.dumps(req, indent=2))
+            try:
+                resp = self._client.create_namespaced_pod(body=req, namespace=pod.namespace)
+                self.log.debug('Pod Creation Response: %s', resp)
+            except ApiException:
+                self.log.exception('Exception when attempting to create Namespaced Pod.')
+                raise
+            return resp
+        except Exception as e:
+            log.exception(e)
+            log.error('Failed to create worker pod %s', pod)
             raise
-        return resp
 
     def delete_pod(self, pod):
         try:

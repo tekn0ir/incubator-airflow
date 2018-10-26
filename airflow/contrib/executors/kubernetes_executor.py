@@ -34,6 +34,7 @@ from airflow.utils.state import State
 from airflow import configuration, settings
 from airflow.exceptions import AirflowConfigException, AirflowException
 from airflow.utils.log.logging_mixin import LoggingMixin
+import sys
 
 
 class KubernetesExecutorConfig:
@@ -352,7 +353,7 @@ class AirflowKubernetesScheduler(LoggingMixin):
             log.exception(e)
             log.error('Failed to launching worker pod with command %s', command)
         except:
-            print "Unexpected error:", sys.exc_info()[0]
+            print "Unexpected error: ", str(sys.exc_info())
 
         self.log.debug("Kubernetes Job created!")
 

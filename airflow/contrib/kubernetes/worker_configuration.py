@@ -185,9 +185,12 @@ class WorkerConfiguration(LoggingMixin):
 
     def make_pod(self, namespace, worker_uuid, pod_id, dag_id, task_id, execution_date,
                  airflow_command, kube_executor_config):
+        self.log.debug("Mount volumes...")
         volumes, volume_mounts = self.init_volumes_and_mounts()
+        self.log.debug("Create container spec")
         worker_init_container_spec = self._get_init_containers(
             copy.deepcopy(volume_mounts))
+        self.log.debug("Container spec: %s", worker_init_container_spec)
         resources = Resources(
             request_memory=kube_executor_config.request_memory,
             request_cpu=kube_executor_config.request_cpu,

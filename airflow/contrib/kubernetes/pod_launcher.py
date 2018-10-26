@@ -28,6 +28,7 @@ from kubernetes.stream import stream as kubernetes_stream
 from airflow import AirflowException
 from requests.exceptions import HTTPError
 from .kube_client import get_kube_client
+import sys
 
 
 class PodStatus(object):
@@ -50,8 +51,11 @@ class PodLauncher(LoggingMixin):
 
     def run_pod_async(self, pod):
         try:
+            self.log.debug('Pre Pod Creation Request: \n%s', pod)
+            sys.stdout.flush()
             req = self.kube_req_factory.create(pod)
             self.log.debug('Pod Creation Request: \n%s', json.dumps(req, indent=2))
+            sys.stdout.flush()
             try:
                 resp = self._client.create_namespaced_pod(body=req, namespace=pod.namespace)
                 self.log.debug('Pod Creation Response: %s', resp)
@@ -62,6 +66,7 @@ class PodLauncher(LoggingMixin):
         except Exception as e:
             log.exception(e)
             log.error('Failed to create worker pod %s', pod)
+            sys.stdout.flush()
             raise
 
     def delete_pod(self, pod):

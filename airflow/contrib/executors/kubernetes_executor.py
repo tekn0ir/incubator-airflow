@@ -345,6 +345,7 @@ class AirflowKubernetesScheduler(LoggingMixin):
                 execution_date=self._datetime_to_label_safe_datestring(execution_date),
                 airflow_command=command, kube_executor_config=kube_executor_config
             )
+            self.log.debug("Anders was here too!!")
             # the watcher will monitor pods, so we do not block.
             self.launcher.run_pod_async(pod)
         except Exception as e:
